@@ -10,6 +10,8 @@ class Event {
   final String organizerId;
   final List<String> participants;
   final DateTime createdAt;
+  final String contactPhone;
+  final String organizationInfo;
 
   Event({
     required this.id,
@@ -23,5 +25,43 @@ class Event {
     required this.organizerId,
     this.participants = const [],
     required this.createdAt,
+    required this.contactPhone,
+    required this.organizationInfo,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'date': date.toIso8601String(),
+      'time': time,
+      'location': location,
+      'category': category,
+      'imageUrl': imageUrl,
+      'organizerId': organizerId,
+      'participants': participants,
+      'createdAt': createdAt.toIso8601String(),
+      'contactPhone': contactPhone,
+      'organizationInfo': organizationInfo,
+    };
+  }
+
+  factory Event.fromMap(Map<String, dynamic> map) {
+    return Event(
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      date: DateTime.parse(map['date']),
+      time: map['time'],
+      location: map['location'],
+      category: map['category'],
+      imageUrl: map['imageUrl'],
+      organizerId: map['organizerId'],
+      participants: List<String>.from(map['participants']),
+      createdAt: DateTime.parse(map['createdAt']),
+      contactPhone: map['contactPhone'],
+      organizationInfo: map['organizationInfo'],
+    );
+  }
 }
