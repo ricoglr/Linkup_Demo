@@ -17,7 +17,14 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      darkTheme: ThemeData.dark(),
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        primaryColor: Colors.red[700],
+        useMaterial3: true,
+      ),
       home: const LoginScreen(),
     );
   }
