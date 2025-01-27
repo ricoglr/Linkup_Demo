@@ -23,7 +23,6 @@ class MyAppState extends State<MyApp> {
       ),
       darkTheme: ThemeData.dark().copyWith(
         primaryColor: Colors.red[700],
-        useMaterial3: true,
       ),
       home: const LoginScreen(),
     );
