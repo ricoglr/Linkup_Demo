@@ -4,12 +4,16 @@ class DateSelector extends StatelessWidget {
   final String label;
   final DateTime? initialDate;
   final Function(DateTime?) onDateSelected;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   const DateSelector({
     Key? key,
     required this.label,
     required this.onDateSelected,
     this.initialDate,
+    this.firstDate,
+    this.lastDate,
   }) : super(key: key);
 
   @override
@@ -19,8 +23,8 @@ class DateSelector extends StatelessWidget {
         final selectedDate = await showDatePicker(
           context: context,
           initialDate: initialDate ?? DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
+          firstDate: firstDate ?? DateTime.now(),
+          lastDate: lastDate ?? DateTime.now().add(const Duration(days: 365)),
         );
         onDateSelected(selectedDate);
       },

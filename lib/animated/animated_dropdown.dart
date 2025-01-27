@@ -5,6 +5,7 @@ class AnimatedDropdown extends StatelessWidget {
   final IconData icon;
   final List<String> items;
   final Function(String?) onChanged;
+  final String? Function(String?)? validator;
 
   const AnimatedDropdown({
     Key? key,
@@ -12,6 +13,7 @@ class AnimatedDropdown extends StatelessWidget {
     required this.icon,
     required this.items,
     required this.onChanged,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -34,6 +36,7 @@ class AnimatedDropdown extends StatelessWidget {
                   ))
               .toList(),
           onChanged: onChanged,
+          validator: validator,
         ),
       ),
     );

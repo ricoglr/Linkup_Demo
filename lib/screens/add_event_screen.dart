@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 import '../animated/animated_dropdown.dart';
 import '../animated/animated_text_field.dart';
 import '../constant/form_constant.dart';
 import '../widgets/data_selector.dart';
 import '../constant/entities.dart';
+import '../services/event_service.dart';
+import '../widgets/time_selector.dart';
 
 class AddEventScreen extends StatefulWidget {
   const AddEventScreen({Key? key}) : super(key: key);
@@ -26,6 +30,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
   String? _location;
   String? _contactPhone;
   String? _organizationInfo;
+  TimeOfDay? _startTime;
+  String? _selectedImagePath;
 
   static const formSections = [
     {
@@ -53,65 +59,69 @@ class _AddEventScreenState extends State<AddEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 200,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(formSections[_currentStep]['title'] as String),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.7),
-                    ],
-                  ),
-                ),
-                child: Icon(
-                  formSections[_currentStep]['icon'] as IconData?,
-                  size: 80,
-                  color: Colors.white.withOpacity(0.3),
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height - 200,
-              child: Column(
-                children: [
-                  _buildProgressBar(),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      formSections[_currentStep]['description'] as String,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                    ),
-                  ),
-                  Expanded(
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        setState(() => _currentStep = index);
-                      },
-                      children: [
-                        _buildBasicInfoSection(),
-                        _buildDateTimeSection(),
-                        _buildLocationSection(),
-                        _buildAdditionalSection(),
+      body: Form(
+        key: _formKey,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 200,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(formSections[_currentStep]['title'] as String),
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColor.withOpacity(0.7),
                       ],
                     ),
                   ),
-                ],
+                  child: Icon(
+                    formSections[_currentStep]['icon'] as IconData?,
+                    size: 80,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 200,
+                child: Column(
+                  children: [
+                    _buildProgressBar(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        formSections[_currentStep]['description'] as String,
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      ),
+                    ),
+                    Expanded(
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          _formKey.currentState?.save();
+                          setState(() => _currentStep = index);
+                        },
+                        children: [
+                          _buildBasicInfoSection(),
+                          _buildDateTimeSection(),
+                          _buildLocationSection(),
+                          _buildAdditionalSection(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
@@ -176,19 +186,26 @@ class _AddEventScreenState extends State<AddEventScreen> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          _buildImageSelector(),
+          const SizedBox(height: 16),
           AnimatedTextField(
             label: "Etkinlik Adı",
             icon: Icons.title,
+            initialValue: _eventName,
             onSaved: (value) => _eventName = value,
-            validator: (value) =>
-                value == null || value.isEmpty ? "Bu alan zorunludur." : null,
+            onChanged: (value) => _eventName = value,
+            validator: (value) => value == null || value.isEmpty
+                ? "Etkinlik adı gereklidir"
+                : null,
           ),
           const SizedBox(height: 16),
           AnimatedDropdown(
             label: "Etkinlik Türü",
             icon: Icons.category,
             items: FormConstants.eventTypes,
-            onChanged: (value) => _eventType = value,
+            onChanged: (value) => setState(() => _eventType = value),
+            validator: (value) =>
+                value == null ? "Etkinlik türü seçiniz" : null,
           ),
         ],
       ),
@@ -201,15 +218,17 @@ class _AddEventScreenState extends State<AddEventScreen> {
       child: Column(
         children: [
           DateSelector(
-            label: "Başlangıç Tarihi",
+            label: "Etkinlik Tarihi",
             initialDate: _startDate,
+            firstDate: DateTime.now(),
+            lastDate: DateTime.now().add(const Duration(days: 365)),
             onDateSelected: (date) => setState(() => _startDate = date),
           ),
           const SizedBox(height: 16),
-          DateSelector(
-            label: "Bitiş Tarihi",
-            initialDate: _endDate,
-            onDateSelected: (date) => setState(() => _endDate = date),
+          TimeSelector(
+            label: "Etkinlik Saati",
+            initialTime: _startTime,
+            onTimeSelected: (time) => setState(() => _startTime = time),
           ),
         ],
       ),
@@ -240,14 +259,18 @@ class _AddEventScreenState extends State<AddEventScreen> {
             label: "Ek Bilgiler",
             icon: Icons.note,
             maxLines: 4,
+            initialValue: _description,
             onSaved: (value) => _description = value,
+            onChanged: (value) => _description = value,
           ),
           const SizedBox(height: 16),
           AnimatedTextField(
             label: "İletişim Telefonu",
             icon: Icons.phone,
             keyboardType: TextInputType.phone,
+            initialValue: _contactPhone,
             onSaved: (value) => _contactPhone = value,
+            onChanged: (value) => _contactPhone = value,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return "Telefon numarası gereklidir";
@@ -276,26 +299,100 @@ class _AddEventScreenState extends State<AddEventScreen> {
     );
   }
 
+  Widget _buildImageSelector() {
+    return InkWell(
+      onTap: _pickImage,
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          image: _selectedImagePath != null
+              ? DecorationImage(
+                  image: FileImage(File(_selectedImagePath!)),
+                  fit: BoxFit.cover,
+                )
+              : null,
+        ),
+        child: _selectedImagePath == null
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.add_photo_alternate, size: 50),
+                  SizedBox(height: 8),
+                  Text('Etkinlik Görseli Seçin'),
+                ],
+              )
+            : null,
+      ),
+    );
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _selectedImagePath = image.path;
+      });
+    }
+  }
+
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
+      final now = DateTime.now();
+      final selectedDateTime = _combineDateTime(_startDate!, _startTime!);
+
+      if (selectedDateTime.isBefore(now)) {
+        _showErrorSnackBar('Geçmiş tarihli etkinlik oluşturulamaz');
+        return;
+      }
+
+      if (_eventName == null || _eventName!.isEmpty) {
+        _showErrorSnackBar('Lütfen etkinlik adını girin');
+        return;
+      }
+
+      if (_eventType == null) {
+        _showErrorSnackBar('Lütfen etkinlik türünü seçin');
+        return;
+      }
+
+      if (_startDate == null) {
+        _showErrorSnackBar('Lütfen etkinlik tarihini seçin');
+        return;
+      }
+
+      if (_startTime == null) {
+        _showErrorSnackBar('Lütfen etkinlik saatini seçin');
+        return;
+      }
+
+      if (_location == null || _location!.isEmpty) {
+        _showErrorSnackBar('Lütfen konum bilgisini girin');
+        return;
+      }
+
       final event = Event(
         id: DateTime.now().toString(),
         title: _eventName!,
-        description: _description!,
+        description: _description ?? '',
         date: _startDate!,
-        time: "10:00",
+        time:
+            '${_startTime!.hour}:${_startTime!.minute.toString().padLeft(2, '0')}',
         location: _location!,
         category: _eventType!,
-        imageUrl: "",
+        imageUrl: _selectedImagePath ?? '',
         organizerId: "current_user_id",
         createdAt: DateTime.now(),
-        contactPhone: _contactPhone!,
-        organizationInfo: _organizationInfo!,
+        contactPhone: _contactPhone ?? '',
+        organizationInfo: _organizationInfo ?? '',
       );
 
-      // Event nesnesini kaydetme işlemleri burada yapılacak
+      EventService().addEvent(event);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -303,6 +400,27 @@ class _AddEventScreenState extends State<AddEventScreen> {
           backgroundColor: Colors.green,
         ),
       );
+
+      Navigator.pop(context);
     }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  DateTime _combineDateTime(DateTime date, TimeOfDay time) {
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
   }
 }
