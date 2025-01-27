@@ -51,7 +51,7 @@ Bu proje MIT Lisansı ile lisanslanmıştır. Daha fazla bilgi için [LICENSE](L
 ## İletişim  
 Sorularınız veya önerileriniz için bizimle iletişime geçebilirsiniz:  
 - **E-posta**: - 
-- **GitHub**: [your-username](https://github.com/ricoglr)  
+- **GitHub**: [ricoglr](https://github.com/ricoglr)  
 
 </details>
 
@@ -106,6 +106,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Contact  
 For questions or suggestions, feel free to reach out:  
 - **Email**: -
-- **GitHub**: [your-username](https://github.com/ricoglr)  
+- **GitHub**: [ricoglr](https://github.com/ricoglr)  
 
 </details>
