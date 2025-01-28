@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-/*import 'package:linkup/screens/forgot_password_screen.dart';
+import 'package:linkup/screens/forgot_password_screen.dart';
 import 'package:linkup/screens/profile_screen.dart';
 import 'package:linkup/screens/register_screen.dart';
-import 'package:linkup/widgets/custom__textfield.dart';*/
+import 'package:linkup/widgets/custom__textfield.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -86,59 +86,108 @@ class _LoginScreenState extends State<LoginScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [],
+                  children: [
+                    const SizedBox(height: 10),
+                    // Email TextField
+                    CustomTextField(
+                      labelText: 'Email',
+                      hintText: 'mail@example.com',
+                      controller: _emailController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email adresi gerekli';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Geçerli bir email adresi girin';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    // Şifre TextField
+                    CustomTextField(
+                      isPassword: true,
+                      labelText: 'Şifre',
+                      hintText: '••••••••',
+                      controller: _passwordController,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: Colors.grey.shade400,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Beni Hatırla ve Şifremi Unuttum
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberMe,
+                              onChanged: (value) {
+                                setState(() {
+                                  _rememberMe = value ?? false;
+                                });
+                              },
+                              fillColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return const Color(0xFF84A98C);
+                                  }
+                                  return Colors.white;
+                                },
+                              ),
+                              checkColor: Colors.white,
+                            ),
+                            Text(
+                              'Beni Hatırla',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Şifremi Unuttum Butonu
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ForgotPasswordScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Şifremi Unuttum',
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                  ],
                 ),
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  // Sosyal medya giriş butonu widget'ı
-  Widget _socialButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey.shade300,
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: Colors.grey.shade700,
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w500,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
