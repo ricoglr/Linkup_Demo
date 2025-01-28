@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:linkup/screens/login_screen.dart';
+import 'package:linkup/widgets/custom__textfield.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -68,8 +70,66 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
+
+          // Alt bölüm - Kayıt formu
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(22),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: SingleChildScrollView(),
+            ),
+          ),
         ],
       ),
     );
   }
+}
+
+// Sosyal Medya ile Bağlanma Butonları Widget'ı
+Widget _socialButton({
+  required IconData icon,
+  required String label,
+  required VoidCallback onTap,
+}) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(8),
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 12,
+      ),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.grey[300]!,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 24,
+            color: Colors.grey.shade700,
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
