@@ -78,7 +78,118 @@ class _RegisterScreenState extends State<RegisterScreen> {
               decoration: const BoxDecoration(
                 color: Colors.white,
               ),
-              child: SingleChildScrollView(),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 8),
+                      // Ad alanı
+                      CustomTextField(
+                          labelText: 'Ad',
+                          hintText: 'Adınızı girin',
+                          controller: _firstNameController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bu alan gerekli';
+                            }
+                            return null;
+                          }),
+                      const SizedBox(height: 16),
+                      // Soyad alanı
+                      CustomTextField(
+                          labelText: 'Soyad',
+                          hintText: 'Soyadınızı girin',
+                          controller: _lastNameController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bu alan gerekli';
+                            }
+                            return null;
+                          }),
+                      const SizedBox(height: 16),
+                      // Email alanı
+                      CustomTextField(
+                        labelText: 'Email',
+                        hintText: 'mail@example.com',
+                        controller: _emailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email adresi gerekli';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Geçerli bir email adresi girin';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      // Şifre alanı
+                      CustomTextField(
+                        labelText: 'Şifre',
+                        hintText: '••••••••',
+                        controller: _passwordController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Şifre gerekli';
+                          }
+                          if (value.length < 6) {
+                            return 'Şifre en az 6 karakter olmalı';
+                          }
+                          return null;
+                        },
+                        isPassword: true,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: Colors.grey.shade400,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Şifre onay alanı
+                      CustomTextField(
+                        labelText: 'Şifre Onay',
+                        hintText: '••••••••',
+                        controller: _confirmPasswordController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Şifre onay gerekli';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Şifreler eşleşmiyor!';
+                          }
+                          return null;
+                        },
+                        isPassword: true,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isConfirmPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.grey.shade400,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isConfirmPasswordVisible =
+                                  !_isConfirmPasswordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ],
