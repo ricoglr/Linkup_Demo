@@ -75,12 +75,22 @@ class ForgotPasswordScreen extends StatelessWidget {
                       controller: emailController,
                       labelText: 'Email',
                       hintText: 'mail@example.com',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email adresi gerekli';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Geçerli bir email adresi girin';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     // Bağlantı gönder butonu
                     ElevatedButton(
                       onPressed: () {
-                        if (emailController.text.isEmpty) {
+                        if (emailController.text.isEmpty ||
+                            !emailController.text.contains('@')) {
                           // Email boş bırakılmışsa kullanıcıya hata göster
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
