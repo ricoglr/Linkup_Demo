@@ -185,12 +185,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Giriş Yap Butonu
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
+                        if (_emailController.text.isEmpty ||
+                            !_emailController.text.contains('@')) {
+                          // Email boş bırakılmışsa kullanıcıya hata göster
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Lütfen email adresinizi girin.'),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(),
+                            ),
+                          );
+                        }
+                        return;
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF84A98C),
