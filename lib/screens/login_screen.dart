@@ -106,7 +106,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 20),
                     // Şifre TextField
                     CustomTextField(
-                      isPassword: true,
                       labelText: 'Şifre',
                       hintText: '••••••••',
                       controller: _passwordController,
@@ -123,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                         },
                       ),
+                      isPassword: !_isPasswordVisible,
                     ),
                     const SizedBox(height: 20),
                     // Beni Hatırla ve Şifremi Unuttum

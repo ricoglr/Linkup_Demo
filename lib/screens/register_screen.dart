@@ -139,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
-                        isPassword: true,
+                        isPassword: !_isPasswordVisible,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible
@@ -169,7 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
-                        isPassword: true,
+                        isPassword: !_isPasswordVisible,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isConfirmPasswordVisible
