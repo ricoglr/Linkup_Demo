@@ -196,13 +196,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 duration: Duration(seconds: 3),
                               ),
                             );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Lütfen tüm alanları doldurun'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
