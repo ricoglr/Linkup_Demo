@@ -385,7 +385,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundColor:
-                        Theme.of(context).primaryColor.withOpacity(0.1),
+                    Theme.of(context).primaryColor.withOpacity(0.1),
                     child: Text(
                       event.category.substring(0, 1),
                       style: TextStyle(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import '../constant/entities.dart';
 import '../services/event_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,25 +40,17 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  List<Event> get _upcomingEvents {
-    final now = DateTime.now();
-    return _events.where((event) => event.date.isAfter(now)).toList();
-  }
-
   List<Event> get _todayEvents {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final tomorrow = today.add(const Duration(days: 1));
 
-    // Bugünün etkinliklerini ve yaklaşan etkinlikleri birleştir
     return _events.where((event) {
       final eventDateTime = _combineDateTime(event.date, event.time);
-      // Bugünün etkinlikleri VEYA yaklaşan 3 saatlik etkinlikler
       return (event.date.isAfter(today) && event.date.isBefore(tomorrow)) ||
           (eventDateTime.isAfter(now) &&
               eventDateTime.isBefore(now.add(const Duration(hours: 3))));
     }).toList()
-      // Tarihe göre sırala
       ..sort((a, b) => _combineDateTime(a.date, a.time)
           .compareTo(_combineDateTime(b.date, b.time)));
   }
@@ -73,7 +67,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   List<Event> get _allEvents {
     final now = DateTime.now();
-    // Sadece şu andan sonraki etkinlikleri göster
     return _events.where((event) {
       final eventDateTime = _combineDateTime(event.date, event.time);
       return eventDateTime.isAfter(now);
@@ -129,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen>
         },
         body: Column(
           children: [
-            // Yaklaşan etkinlikler bölümü
             if (_nextThreeHoursEvents.isNotEmpty)
               Container(
                 padding: const EdgeInsets.all(16),
@@ -156,32 +148,31 @@ class _HomeScreenState extends State<HomeScreen>
                       child: Row(
                         children: _nextThreeHoursEvents
                             .map((event) => Card(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.event,
-                                            color:
-                                                Theme.of(context).primaryColor),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '${event.title} (${event.time})',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                          margin: const EdgeInsets.only(right: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Icon(Icons.event,
+                                    color:
+                                    Theme.of(context).primaryColor),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${event.title} (${event.time})',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ))
+                                ),
+                              ],
+                            ),
+                          ),
+                        ))
                             .toList(),
                       ),
                     ),
                   ],
                 ),
               ),
-            // Tab içerikleri
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -202,22 +193,75 @@ class _HomeScreenState extends State<HomeScreen>
     return events.isEmpty
         ? const Center(child: Text('Etkinlik bulunmamaktadır'))
         : ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              return EventCard(event: events[index]);
-            },
-          );
+      padding: const EdgeInsets.all(16),
+      itemCount: events.length,
+      itemBuilder: (context, index) {
+        return EventCard(event: events[index]);
+      },
+    );
   }
 }
 
-class EventCard extends StatelessWidget {
+class EventCard extends StatefulWidget {
   final Event event;
 
   const EventCard({
     Key? key,
     required this.event,
   }) : super(key: key);
+
+  @override
+  State<EventCard> createState() => _EventCardState();
+}
+
+class _EventCardState extends State<EventCard> {
+  int _participantCount = 0;
+  bool _hasJoined = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadParticipationStatus();
+  }
+
+  // Katılım durumunu SharedPreferences'ten yükleme
+  Future<void> _loadParticipationStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool joined = prefs.getBool('joined_${widget.event.id}') ?? false;
+    int participantCount = prefs.getInt('participantCount_${widget.event.id}') ?? 0;
+
+    setState(() {
+      _hasJoined = joined;
+      _participantCount = participantCount;
+    });
+
+    print("Loaded status: $_hasJoined, Participants: $_participantCount"); // Debugging
+  }
+
+  // Katılım durumunu SharedPreferences'e kaydetme
+  Future<void> _saveParticipationStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('joined_${widget.event.id}', _hasJoined);
+    await prefs.setInt('participantCount_${widget.event.id}', _participantCount);
+    print("Saved status: $_hasJoined, Participants: $_participantCount"); // Debugging
+  }
+
+  // Etkinlik katılımını değiştiren fonksiyon
+  void _joinEvent() {
+    setState(() {
+      if (_hasJoined) {
+        // Katıldıysa katılımcı sayısını azalt ve "katıl" durumuna dön
+        _participantCount -= 1;
+        _hasJoined = false;
+      } else {
+        // Katılmadıysa katılımcı sayısını artır ve "katıldım" durumuna geç
+        _participantCount += 1;
+        _hasJoined = true;
+      }
+    });
+
+    _saveParticipationStatus();  // Değişiklikleri kaydet
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -228,74 +272,71 @@ class EventCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Etkinlik resmini göstermek
           Container(
             height: 200,
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor.withOpacity(0.1),
               borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
+              const BorderRadius.vertical(top: Radius.circular(12)),
               image: _buildImageDecoration(),
             ),
-            child: event.imageUrl.isEmpty
+            child: widget.event.imageUrl.isEmpty
                 ? Center(
-                    child: Icon(
-                      Icons.event,
-                      size: 48,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  )
+              child: Icon(
+                Icons.event,
+                size: 48,
+                color: Theme.of(context).primaryColor,
+              ),
+            )
                 : null,
           ),
+          // Etkinlik detayları
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  event.title,
+                  widget.event.title,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildInfoRow(Icons.category, event.category),
+                _buildInfoRow(Icons.category, widget.event.category),
                 _buildInfoRow(
                   Icons.calendar_today,
-                  '${event.date.day}/${event.date.month}/${event.date.year}',
+                  '${widget.event.date.day}/${widget.event.date.month}/${widget.event.date.year}',
                 ),
-                _buildInfoRow(Icons.location_on, event.location),
-                _buildInfoRow(Icons.phone, event.contactPhone),
+                _buildInfoRow(Icons.location_on, widget.event.location),
+                _buildInfoRow(Icons.phone, widget.event.contactPhone),
                 const SizedBox(height: 8),
                 Text(
-                  event.description,
+                  widget.event.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600]),
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  'Katılımcı Sayısı: $_participantCount',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
+          // Katılma butonu
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Katılım işlemi
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Yakında aktif olacak!'),
-                        backgroundColor: Colors.orange,
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.person_add),
-                  label: const Text('Katıl'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                  ),
+                  onPressed: _joinEvent,
+                  icon: Icon(_hasJoined ? Icons.check : Icons.person_add),
+                  label: Text(_hasJoined ? 'Katıldım' : 'Katıl'),
                 ),
               ],
             ),
@@ -305,12 +346,13 @@ class EventCard extends StatelessWidget {
     );
   }
 
+  // Resim dekorasyonu (varsa)
   DecorationImage? _buildImageDecoration() {
-    if (event.imageUrl.isEmpty) return null;
+    if (widget.event.imageUrl.isEmpty) return null;
 
     try {
       return DecorationImage(
-        image: FileImage(File(event.imageUrl)),
+        image: FileImage(File(widget.event.imageUrl)),
         fit: BoxFit.cover,
       );
     } catch (e) {
@@ -318,6 +360,7 @@ class EventCard extends StatelessWidget {
     }
   }
 
+  // Etkinlik bilgisi satırı
   Widget _buildInfoRow(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
