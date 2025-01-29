@@ -131,7 +131,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
     return Row(
       children: List.generate(
         formSections.length,
-        (index) => Expanded(
+            (index) => Expanded(
           child: Container(
             height: 4,
             margin: const EdgeInsets.symmetric(horizontal: 2),
@@ -205,7 +205,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
             items: FormConstants.eventTypes,
             onChanged: (value) => setState(() => _eventType = value),
             validator: (value) =>
-                value == null ? "Etkinlik türü seçiniz" : null,
+            value == null ? "Etkinlik türü seçiniz" : null,
           ),
         ],
       ),
@@ -309,20 +309,20 @@ class _AddEventScreenState extends State<AddEventScreen> {
           borderRadius: BorderRadius.circular(12),
           image: _selectedImagePath != null
               ? DecorationImage(
-                  image: FileImage(File(_selectedImagePath!)),
-                  fit: BoxFit.cover,
-                )
+            image: FileImage(File(_selectedImagePath!)),
+            fit: BoxFit.cover,
+          )
               : null,
         ),
         child: _selectedImagePath == null
             ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.add_photo_alternate, size: 50),
-                  SizedBox(height: 8),
-                  Text('Etkinlik Görseli Seçin'),
-                ],
-              )
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.add_photo_alternate, size: 50),
+            SizedBox(height: 8),
+            Text('Etkinlik Görseli Seçin'),
+          ],
+        )
             : null,
       ),
     );
@@ -382,7 +382,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         description: _description ?? '',
         date: _startDate!,
         time:
-            '${_startTime!.hour}:${_startTime!.minute.toString().padLeft(2, '0')}',
+        '${_startTime!.hour}:${_startTime!.minute.toString().padLeft(2, '0')}',
         location: _location!,
         category: _eventType!,
         imageUrl: _selectedImagePath ?? '',
