@@ -82,4 +82,5 @@ class Badge {
     required this.requiredEvents,
     required this.category,
   });
+
 }
