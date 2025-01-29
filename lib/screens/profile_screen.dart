@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linkup/screens/login_screen.dart';
 import '../constant/entities.dart';
 import '../services/badge_service.dart';
 import '../services/event_service.dart';
@@ -459,7 +460,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(color: Colors.red),
             ),
             onTap: () {
-              // TODO: Çıkış işlemi
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Çıkış Yap',
+                        style: TextStyle(
+                            color: Color(0xFF2F3E46),
+                            fontWeight: FontWeight.w600)),
+                    content: Text(
+                        'Çıkış yapmak üzeresiniz. Çıkmak istediğinize emin misiniz?',
+                        style: TextStyle(
+                            color: Color(0xFF2F3E46),
+                            fontWeight: FontWeight.w400)),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('İptal',
+                            style: TextStyle(
+                                color: Color(0xFF2F3E46),
+                                fontWeight: FontWeight.w300)),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF84A98C)),
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                            (Route<dynamic> route) => false,
+                          );
+                        },
+                        child: Text(
+                          'Evet',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w300),
+                        ),
+                      ),
+                    ],
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  );
+                },
+              );
             },
           ),
         ],
