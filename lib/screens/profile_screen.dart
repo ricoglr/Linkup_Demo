@@ -467,12 +467,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: Text('Çıkış Yap',
                         style: TextStyle(
                             color: Color(0xFF2F3E46),
-                            fontWeight: FontWeight.w500)),
+                            fontWeight: FontWeight.w600)),
                     content: Text(
                         'Çıkış yapmak üzeresiniz. Çıkmak istediğinize emin misiniz?',
                         style: TextStyle(
                             color: Color(0xFF2F3E46),
-                            fontWeight: FontWeight.w300)),
+                            fontWeight: FontWeight.w400)),
                     actions: <Widget>[
                       ElevatedButton(
                         onPressed: () {
