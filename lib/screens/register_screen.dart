@@ -23,6 +23,84 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  String? _handleName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Bu alan gerekli';
+    }
+    return null;
+  }
+
+  String? _handleEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email adresi gerekli';
+    }
+
+    final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    if (!regex.hasMatch(value)) {
+      return 'Geçerli bir email adresi girin';
+    }
+    return null;
+  }
+
+  String? _handlePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Şifre gerekli';
+    }
+    if (value.length < 6) {
+      return 'Şifre en az 6 karakter olmalı';
+    }
+    return null;
+  }
+
+  String? _handleConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Şifre onay gerekli';
+    }
+    if (value != _passwordController.text) {
+      return 'Şifreler eşleşmiyor!';
+    }
+    return null;
+  }
+
+  Future<void> showConfirmationDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Kayıt Başarılı',
+            style: TextStyle(
+                color: Color(0xFF2F3E46), fontWeight: FontWeight.w600),
+          ),
+          content: Text('Kayıt oldunuz. Lütfen giriş yapın.',
+              style: TextStyle(
+                  color: Color(0xFF2F3E46), fontWeight: FontWeight.w300)),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Tamam',
+                style: TextStyle(
+                    color: Color(0xFF2F3E46), fontWeight: FontWeight.w600),
+              ),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (route) => false,
+                );
+              },
+            ),
+          ],
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -87,42 +165,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 8),
                       // Ad alanı
                       CustomTextField(
-                          labelText: 'Ad',
-                          hintText: 'Adınızı girin',
-                          controller: _firstNameController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Bu alan gerekli';
-                            }
-                            return null;
-                          }),
+                        labelText: 'Ad',
+                        hintText: 'Adınızı girin',
+                        controller: _firstNameController,
+                        validator: _handleName,
+                      ),
                       const SizedBox(height: 16),
                       // Soyad alanı
                       CustomTextField(
-                          labelText: 'Soyad',
-                          hintText: 'Soyadınızı girin',
-                          controller: _lastNameController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Bu alan gerekli';
-                            }
-                            return null;
-                          }),
+                        labelText: 'Soyad',
+                        hintText: 'Soyadınızı girin',
+                        controller: _lastNameController,
+                        validator: _handleName,
+                      ),
                       const SizedBox(height: 16),
                       // Email alanı
                       CustomTextField(
                         labelText: 'Email',
                         hintText: 'mail@example.com',
                         controller: _emailController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email adresi gerekli';
-                          }
-                          if (!value.contains('@')) {
-                            return 'Geçerli bir email adresi girin';
-                          }
-                          return null;
-                        },
+                        validator: _handleEmail,
                       ),
                       const SizedBox(height: 16),
                       // Şifre alanı
@@ -130,21 +192,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         labelText: 'Şifre',
                         hintText: '••••••••',
                         controller: _passwordController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Şifre gerekli';
-                          }
-                          if (value.length < 6) {
-                            return 'Şifre en az 6 karakter olmalı';
-                          }
-                          return null;
-                        },
-                        isPassword: !_isPasswordVisible,
+                        validator: _handlePassword,
+                        obsureText: !_isPasswordVisible,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                             color: Colors.grey.shade400,
                           ),
                           onPressed: () {
@@ -160,16 +214,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         labelText: 'Şifre Onay',
                         hintText: '••••••••',
                         controller: _confirmPasswordController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Şifre onay gerekli';
-                          }
-                          if (value != _passwordController.text) {
-                            return 'Şifreler eşleşmiyor!';
-                          }
-                          return null;
-                        },
-                        isPassword: !_isPasswordVisible,
+                        validator: _handleConfirmPassword,
+                        obsureText: !_isConfirmPasswordVisible,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isConfirmPasswordVisible
@@ -190,12 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState?.validate() ?? false) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Kayıt başarılı!'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
+                            showConfirmationDialog(context);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -250,10 +291,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginScreen()));
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen()),
+                                (route) => false,
+                              );
                             },
                             child: const Text(
                               'Giriş Yap',
@@ -294,7 +337,7 @@ Widget _socialButton({
       ),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.grey[300]!,
+          color: Colors.grey.shade300,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(8),
