@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   shared_preferences: ^2.0.15
+  flutter_dotenv: ^5.2.1
   flutter:
     sdk: flutter
   image_picker: ^1.0.7
