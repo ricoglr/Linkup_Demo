@@ -4,7 +4,6 @@ import '../constant/entities.dart';
 import '../services/event_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -40,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
+  // Mevcut event filtreleme metodları aynı kalacak
   List<Event> get _todayEvents {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -101,6 +101,15 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Bottom bar ile aynı renk
+    final barColor = isDark
+        ? colorScheme.primary.withOpacity(0.2)
+        : colorScheme.primary.withOpacity(0.2);
+
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -108,9 +117,19 @@ class _HomeScreenState extends State<HomeScreen>
             SliverAppBar(
               pinned: true,
               floating: true,
-              title: const Text('Etkinlikler'),
+              centerTitle: true,
+              backgroundColor: barColor,
+              title: Text(
+                'Etkinlikler',
+                style: textTheme.headlineMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
               bottom: TabBar(
                 controller: _tabController,
+                labelColor: colorScheme.primary,
+                unselectedLabelColor: colorScheme.onSurface.withOpacity(0.7),
+                indicatorColor: colorScheme.primary,
                 tabs: const [
                   Tab(text: 'Bugün'),
                   Tab(text: 'Bu Hafta'),
@@ -125,19 +144,23 @@ class _HomeScreenState extends State<HomeScreen>
             if (_nextThreeHoursEvents.isNotEmpty)
               Container(
                 padding: const EdgeInsets.all(16),
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                color: colorScheme.primary.withOpacity(0.1),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: const [
-                        Icon(Icons.access_time, size: 20),
-                        SizedBox(width: 8),
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 20,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
                         Text(
                           'Yaklaşan Etkinlikler',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: colorScheme.primary,
                           ),
                         ),
                       ],
@@ -148,25 +171,26 @@ class _HomeScreenState extends State<HomeScreen>
                       child: Row(
                         children: _nextThreeHoursEvents
                             .map((event) => Card(
-                          margin: const EdgeInsets.only(right: 8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Row(
-                              children: [
-                                Icon(Icons.event,
-                                    color:
-                                    Theme.of(context).primaryColor),
-                                const SizedBox(width: 8),
-                                Text(
-                                  '${event.title} (${event.time})',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                  margin: const EdgeInsets.only(right: 8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.event,
+                                          color: colorScheme.primary,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '${event.title} (${event.time})',
+                                          style: textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ))
+                                ))
                             .toList(),
                       ),
                     ),
@@ -190,15 +214,22 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildEventList(List<Event> events) {
+    final textTheme = Theme.of(context).textTheme;
+
     return events.isEmpty
-        ? const Center(child: Text('Etkinlik bulunmamaktadır'))
+        ? Center(
+            child: Text(
+              'Etkinlik bulunmamaktadır',
+              style: textTheme.bodyLarge,
+            ),
+          )
         : ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: events.length,
-      itemBuilder: (context, index) {
-        return EventCard(event: events[index]);
-      },
-    );
+            padding: const EdgeInsets.all(16),
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              return EventCard(event: events[index]);
+            },
+          );
   }
 }
 
@@ -224,47 +255,43 @@ class _EventCardState extends State<EventCard> {
     _loadParticipationStatus();
   }
 
-  // Katılım durumunu SharedPreferences'ten yükleme
   Future<void> _loadParticipationStatus() async {
     final prefs = await SharedPreferences.getInstance();
     bool joined = prefs.getBool('joined_${widget.event.id}') ?? false;
-    int participantCount = prefs.getInt('participantCount_${widget.event.id}') ?? 0;
+    int participantCount =
+        prefs.getInt('participantCount_${widget.event.id}') ?? 0;
 
     setState(() {
       _hasJoined = joined;
       _participantCount = participantCount;
     });
-
-    print("Loaded status: $_hasJoined, Participants: $_participantCount"); // Debugging
   }
 
-  // Katılım durumunu SharedPreferences'e kaydetme
   Future<void> _saveParticipationStatus() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('joined_${widget.event.id}', _hasJoined);
-    await prefs.setInt('participantCount_${widget.event.id}', _participantCount);
-    print("Saved status: $_hasJoined, Participants: $_participantCount"); // Debugging
+    await prefs.setInt(
+        'participantCount_${widget.event.id}', _participantCount);
   }
 
-  // Etkinlik katılımını değiştiren fonksiyon
   void _joinEvent() {
     setState(() {
       if (_hasJoined) {
-        // Katıldıysa katılımcı sayısını azalt ve "katıl" durumuna dön
         _participantCount -= 1;
         _hasJoined = false;
       } else {
-        // Katılmadıysa katılımcı sayısını artır ve "katıldım" durumuna geç
         _participantCount += 1;
         _hasJoined = true;
       }
     });
-
-    _saveParticipationStatus();  // Değişiklikleri kaydet
+    _saveParticipationStatus();
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -272,26 +299,24 @@ class _EventCardState extends State<EventCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Etkinlik resmini göstermek
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              color: colorScheme.primaryContainer,
               borderRadius:
-              const BorderRadius.vertical(top: Radius.circular(12)),
+                  const BorderRadius.vertical(top: Radius.circular(12)),
               image: _buildImageDecoration(),
             ),
             child: widget.event.imageUrl.isEmpty
                 ? Center(
-              child: Icon(
-                Icons.event,
-                size: 48,
-                color: Theme.of(context).primaryColor,
-              ),
-            )
+                    child: Icon(
+                      Icons.event,
+                      size: 48,
+                      color: colorScheme.primary,
+                    ),
+                  )
                 : null,
           ),
-          // Etkinlik detayları
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -299,8 +324,7 @@ class _EventCardState extends State<EventCard> {
               children: [
                 Text(
                   widget.event.title,
-                  style: const TextStyle(
-                    fontSize: 20,
+                  style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -317,17 +341,20 @@ class _EventCardState extends State<EventCard> {
                   widget.event.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Katılımcı Sayısı: $_participantCount',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           ),
-          // Katılma butonu
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -335,8 +362,19 @@ class _EventCardState extends State<EventCard> {
               children: [
                 ElevatedButton.icon(
                   onPressed: _joinEvent,
-                  icon: Icon(_hasJoined ? Icons.check : Icons.person_add),
-                  label: Text(_hasJoined ? 'Katıldım' : 'Katıl'),
+                  icon: Icon(
+                    _hasJoined ? Icons.check : Icons.person_add,
+                    color: colorScheme.onPrimary,
+                  ),
+                  label: Text(
+                    _hasJoined ? 'Katıldım' : 'Katıl',
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                  ),
                 ),
               ],
             ),
@@ -346,7 +384,6 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-  // Resim dekorasyonu (varsa)
   DecorationImage? _buildImageDecoration() {
     if (widget.event.imageUrl.isEmpty) return null;
 
@@ -360,17 +397,25 @@ class _EventCardState extends State<EventCard> {
     }
   }
 
-  // Etkinlik bilgisi satırı
   Widget _buildInfoRow(IconData icon, String text) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: Colors.grey[600]),
+          Icon(
+            icon,
+            size: 16,
+            color: colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(width: 8),
           Text(
             text,
-            style: TextStyle(color: Colors.grey[600]),
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

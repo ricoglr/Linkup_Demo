@@ -15,7 +15,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final BadgeService _badgeService = BadgeService();
   final EventService _eventService = EventService();
 
-  // Temsili veriler
+  // Temsili veriler aynı kalacak
   final Map<String, dynamic> _userData = {
     'name': 'Kullanıcı Adı',
     'email': 'kullanici@email.com',
@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'createdEvents': 5,
   };
 
-  // Temsili geçmiş etkinlikler
+  // Temsili geçmiş etkinlikler aynı kalacak
   final List<Event> _pastEvents = [
     Event(
       id: '1',
@@ -54,11 +54,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       contactPhone: '555-0002',
       organizationInfo: 'UN Women',
     ),
-    // ... diğer geçmiş etkinlikler
   ];
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -66,22 +68,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             expandedHeight: 200,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(_userData['name']),
+              title: Text(_userData['name'],
+                  style: textTheme.titleLarge
+                      ?.copyWith(color: colorScheme.onPrimary)),
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.7),
+                      colorScheme.primary,
+                      colorScheme.primary.withOpacity(0.7),
                     ],
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.person,
                   size: 80,
-                  color: Colors.white24,
+                  color: colorScheme.onPrimary.withOpacity(0.24),
                 ),
               ),
             ),
@@ -120,12 +124,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildStatItem(String label, int value) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Text(
           value.toString(),
-          style: const TextStyle(
-            fontSize: 24,
+          style: textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -133,7 +139,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey[600]),
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -141,6 +149,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildBadgesSection() {
     final badges = _badgeService.getUserBadges("current_user_id");
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       margin: const EdgeInsets.all(16),
@@ -151,20 +161,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                const Icon(Icons.military_tech, size: 24),
+                Icon(Icons.military_tech, size: 24, color: colorScheme.primary),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'Rozetlerim',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: textTheme.titleLarge,
                 ),
                 const Spacer(),
                 Text(
                   '${badges.length} / ${_badgeService.getAllBadges().length}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -172,21 +179,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           if (badges.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Center(
                 child: Column(
                   children: [
                     Icon(
                       Icons.emoji_events_outlined,
                       size: 48,
-                      color: Colors.grey,
+                      color: colorScheme.onSurfaceVariant,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Henüz rozet kazanılmadı.\nEtkinliklere katılarak rozetler kazanabilirsiniz!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -215,22 +224,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               badge.icon,
-                              style: const TextStyle(fontSize: 24),
+                              style: textTheme.headlineSmall,
                             ),
                             const SizedBox(width: 8),
-                            Expanded(child: Text(badge.name)),
+                            Expanded(
+                              child: Text(
+                                badge.name,
+                                style: textTheme.titleLarge,
+                              ),
+                            ),
                           ],
                         ),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(badge.description),
+                            Text(
+                              badge.description,
+                              style: textTheme.bodyLarge,
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               'Kategori: ${badge.category}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -239,7 +256,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text('Tamam'),
+                            child: Text(
+                              'Tamam',
+                              style: TextStyle(color: colorScheme.primary),
+                            ),
                           ),
                         ],
                       ),
@@ -251,13 +271,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Theme.of(context).primaryColor.withOpacity(0.1),
-                          Theme.of(context).primaryColor.withOpacity(0.2),
+                          colorScheme.primary.withOpacity(0.1),
+                          colorScheme.primary.withOpacity(0.2),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        color: colorScheme.primary.withOpacity(0.3),
                       ),
                     ),
                     child: Column(
@@ -266,11 +286,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: colorScheme.surface,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: colorScheme.shadow.withOpacity(0.1),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -278,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: Text(
                             badge.icon,
-                            style: const TextStyle(fontSize: 32),
+                            style: textTheme.headlineMedium,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -289,8 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
+                            style: textTheme.labelSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -307,41 +326,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileSection() {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       margin: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Text(
               'Profil Bilgileri',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: textTheme.titleLarge,
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.person),
-            title: Text(_userData['name']),
-            trailing: const Icon(Icons.edit),
+            leading: Icon(Icons.person, color: colorScheme.primary),
+            title: Text(_userData['name'], style: textTheme.bodyLarge),
+            trailing: Icon(Icons.edit, color: colorScheme.primary),
             onTap: () {
               // TODO: İsim düzenleme
             },
           ),
           ListTile(
-            leading: const Icon(Icons.email),
-            title: Text(_userData['email']),
-            trailing: const Icon(Icons.edit),
+            leading: Icon(Icons.email, color: colorScheme.primary),
+            title: Text(_userData['email'], style: textTheme.bodyLarge),
+            trailing: Icon(Icons.edit, color: colorScheme.primary),
             onTap: () {
               // TODO: Email düzenleme
             },
           ),
           ListTile(
-            leading: const Icon(Icons.phone),
-            title: Text(_userData['phone']),
-            trailing: const Icon(Icons.edit),
+            leading: Icon(Icons.phone, color: colorScheme.primary),
+            title: Text(_userData['phone'], style: textTheme.bodyLarge),
+            trailing: Icon(Icons.edit, color: colorScheme.primary),
             onTap: () {
               // TODO: Telefon düzenleme
             },
@@ -352,27 +371,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildPastEventsSection() {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       margin: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Text(
               'Katıldığım Etkinlikler',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: textTheme.titleLarge,
             ),
           ),
           if (_pastEvents.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Text(
                 'Henüz bir etkinliğe katılmadınız.',
-                style: TextStyle(color: Colors.grey),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
             )
           else
@@ -384,22 +405,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final event = _pastEvents[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundColor:
-                    Theme.of(context).primaryColor.withOpacity(0.1),
+                    backgroundColor: colorScheme.primary.withOpacity(0.1),
                     child: Text(
                       event.category.substring(0, 1),
                       style: TextStyle(
-                        color: Theme.of(context).primaryColor,
+                        color: colorScheme.primary,
                       ),
                     ),
                   ),
-                  title: Text(event.title),
+                  title: Text(event.title, style: textTheme.bodyLarge),
                   subtitle: Text(
                     '${event.date.day}/${event.date.month}/${event.date.year} - ${event.location}',
+                    style: textTheme.bodyMedium,
                   ),
                   trailing: Icon(
                     Icons.verified,
-                    color: Theme.of(context).primaryColor,
+                    color: colorScheme.primary,
                   ),
                 );
               },
@@ -410,98 +431,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildSettingsSection() {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       margin: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Text(
               'Ayarlar',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: textTheme.titleLarge,
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.notifications),
-            title: const Text('Bildirimler'),
+            leading: Icon(Icons.notifications, color: colorScheme.primary),
+            title: Text('Bildirimler', style: textTheme.bodyLarge),
             trailing: Switch(
               value: true,
+              activeColor: colorScheme.primary,
               onChanged: (value) {
                 // TODO: Bildirim ayarları
               },
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.dark_mode),
-            title: const Text('Karanlık Mod'),
+            leading: Icon(Icons.dark_mode, color: colorScheme.primary),
+            title: Text('Karanlık Mod', style: textTheme.bodyLarge),
             trailing: Switch(
-              value: false,
-              onChanged: (value) {
-                // TODO: Tema değiştirme
-              },
+              value: false, // Tema durumu
+              activeColor: colorScheme.primary,
+              onChanged: (value) {},
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.language),
-            title: const Text('Dil'),
-            trailing: const Icon(Icons.arrow_forward_ios),
+            leading: Icon(Icons.language, color: colorScheme.primary),
+            title: Text('Dil', style: textTheme.bodyLarge),
+            trailing: Icon(Icons.arrow_forward_ios, color: colorScheme.primary),
             onTap: () {
               // TODO: Dil seçimi
             },
           ),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text(
+            leading: Icon(Icons.logout, color: colorScheme.error),
+            title: Text(
               'Çıkış Yap',
-              style: TextStyle(color: Colors.red),
+              style: textTheme.bodyLarge?.copyWith(
+                color: colorScheme.error,
+              ),
             ),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Çıkış Yap',
-                        style: TextStyle(
-                            color: Color(0xFF2F3E46),
-                            fontWeight: FontWeight.w500)),
+                    title: Text(
+                      'Çıkış Yap',
+                      style: textTheme.titleLarge,
+                    ),
                     content: Text(
-                        'Çıkış yapmak üzeresiniz. Çıkmak istediğinize emin misiniz?',
-                        style: TextStyle(
-                            color: Color(0xFF2F3E46),
-                            fontWeight: FontWeight.w300)),
+                      'Çıkış yapmak üzeresiniz. Çıkmak istediğinize emin misiniz?',
+                      style: textTheme.bodyMedium,
+                    ),
                     actions: <Widget>[
-                      ElevatedButton(
+                      TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('İptal',
-                            style: TextStyle(
-                                color: Color(0xFF2F3E46),
-                                fontWeight: FontWeight.w300)),
+                        child: Text(
+                          'İptal',
+                          style: TextStyle(color: colorScheme.primary),
+                        ),
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF84A98C)),
+                          backgroundColor: colorScheme.primary,
+                        ),
                         onPressed: () {
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
+                              builder: (context) => LoginScreen(),
+                            ),
                             (Route<dynamic> route) => false,
                           );
                         },
                         child: Text(
                           'Evet',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w300),
+                          style: TextStyle(color: colorScheme.onPrimary),
                         ),
                       ),
                     ],
-                    backgroundColor: Colors.white,
+                    backgroundColor: colorScheme.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
