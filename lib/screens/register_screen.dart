@@ -67,21 +67,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        final textTheme = Theme.of(context).textTheme;
+
         return AlertDialog(
           title: Text(
             'Kayıt Başarılı',
-            style: TextStyle(
-                color: Color(0xFF2F3E46), fontWeight: FontWeight.w600),
+            style: textTheme.titleMedium?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          content: Text('Kayıt oldunuz. Lütfen giriş yapın.',
-              style: TextStyle(
-                  color: Color(0xFF2F3E46), fontWeight: FontWeight.w300)),
+          content: Text(
+            'Kayıt oldunuz. Lütfen giriş yapın.',
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
           actions: <Widget>[
             TextButton(
               child: Text(
                 'Tamam',
-                style: TextStyle(
-                    color: Color(0xFF2F3E46), fontWeight: FontWeight.w600),
+                style: textTheme.labelLarge?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
@@ -92,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
             ),
           ],
-          backgroundColor: Colors.white,
+          backgroundColor: colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -120,28 +131,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(24),
-            color: const Color(0xFF2F3E46),
+            color: Theme.of(context).colorScheme.primary,
             child: SafeArea(
               bottom: false,
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  const Text(
+                  Text(
                     'Hesap Oluştur',
-                    style: TextStyle(
-                      fontSize: 34,
-                      height: 1.2,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     'Bilgilerinizi girerek üye olun',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withOpacity(0.7),
+                        ),
                   ),
                   const SizedBox(height: 30),
                 ],
@@ -153,8 +164,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(22),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onSecondary,
               ),
               child: SingleChildScrollView(
                 child: Form(
@@ -171,7 +182,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         validator: _handleName,
                       ),
                       const SizedBox(height: 16),
-                      // Soyad alanı
+
+// Soyad alanı
                       CustomTextField(
                         labelText: 'Soyad',
                         hintText: 'Soyadınızı girin',
@@ -179,7 +191,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         validator: _handleName,
                       ),
                       const SizedBox(height: 16),
-                      // Email alanı
+
+// Email alanı
                       CustomTextField(
                         labelText: 'Email',
                         hintText: 'mail@example.com',
@@ -187,7 +200,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         validator: _handleEmail,
                       ),
                       const SizedBox(height: 16),
-                      // Şifre alanı
+
+// Şifre alanı
                       CustomTextField(
                         labelText: 'Şifre',
                         hintText: '••••••••',
@@ -199,7 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _isPasswordVisible
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: Colors.grey.shade400,
+                            color: Theme.of(context).colorScheme.outlineVariant,
                           ),
                           onPressed: () {
                             setState(() {
@@ -209,7 +223,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Şifre onay alanı
+
+// Şifre onay alanı
                       CustomTextField(
                         labelText: 'Şifre Onay',
                         hintText: '••••••••',
@@ -221,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _isConfirmPasswordVisible
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: Colors.grey.shade400,
+                            color: Theme.of(context).colorScheme.outlineVariant,
                           ),
                           onPressed: () {
                             setState(() {
@@ -232,6 +247,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
+
                       // Kayıt ol butonu
                       ElevatedButton(
                         onPressed: () {
@@ -240,22 +256,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF84A98C),
-                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Kayıt Ol',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
                         ),
                       ),
+
                       const SizedBox(height: 30),
                       // Sosyal medya butonları
                       Row(
@@ -265,6 +287,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               icon: Icons.g_mobiledata_rounded,
                               label: 'Google',
                               onTap: () {},
+                              iconColor: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                              textStyle: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
                           const SizedBox(width: 20),
@@ -273,10 +299,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               icon: Icons.facebook,
                               label: 'Facebook',
                               onTap: () {},
+                              iconColor: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                              textStyle: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 20),
                       // Giriş Yap Linki
                       Row(
@@ -284,10 +315,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         children: [
                           Text(
                             'Zaten hesabınız var mı? ',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 14,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
                           ),
                           TextButton(
                             onPressed: () {
@@ -298,13 +333,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 (route) => false,
                               );
                             },
-                            child: const Text(
+                            child: Text(
                               'Giriş Yap',
-                              style: TextStyle(
-                                color: Color(0xFF2F3E46),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
                           ),
                         ],
@@ -326,44 +364,49 @@ Widget _socialButton({
   required IconData icon,
   required String label,
   required VoidCallback onTap,
+  Color? iconColor,
+  TextStyle? textStyle,
 }) {
-  return InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(8),
-    child: Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 12,
-      ),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey.shade300,
-          width: 1,
-        ),
+  return Builder(
+    builder: (context) {
+      final theme = Theme.of(context);
+      return InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 24,
-            color: Colors.grey.shade700,
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade700,
-                fontWeight: FontWeight.w500,
-              ),
-              overflow: TextOverflow.ellipsis,
+        splashColor: theme.colorScheme.primary.withOpacity(0.1),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant,
+              width: 1,
             ),
+            borderRadius: BorderRadius.circular(8),
           ),
-        ],
-      ),
-    ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 24,
+                color: iconColor ?? theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  label,
+                  style: textStyle ??
+                      theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }

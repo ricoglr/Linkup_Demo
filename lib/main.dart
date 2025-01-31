@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
+import 'package:linkup/screens/login_screen.dart';
+import 'package:linkup/theme/app_theme.dart';
+import 'package:linkup/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => ThemeProvider(), child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -15,16 +19,15 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData.dark().copyWith(
-        primaryColor: Colors.red[700],
-      ),
-      home: const LoginScreen(),
-    );
+    return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
+      return MaterialApp(
+        title: 'LINK UP',
+        debugShowCheckedModeBanner: false,
+        theme:
+            themeProvider.isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
+        themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        home: const LoginScreen(),
+      );
+    });
   }
 }

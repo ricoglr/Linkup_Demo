@@ -58,14 +58,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Bottom bar ile aynı renk
     final barColor = isDark
-        ? colorScheme.primary.withOpacity(0.2)
-        : colorScheme.primary.withOpacity(0.2);
+        ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+        : Theme.of(context).colorScheme.primary.withOpacity(0.2);
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -79,9 +77,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   formSections[_currentStep]['title'] as String,
-                  style: textTheme.titleLarge?.copyWith(
-                    color: colorScheme.onSurface,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 background: Container(
                   decoration: BoxDecoration(
@@ -89,15 +87,16 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        colorScheme.primary.withOpacity(0.2),
-                        colorScheme.primary.withOpacity(0.1),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       ],
                     ),
                   ),
                   child: Icon(
                     formSections[_currentStep]['icon'] as IconData?,
                     size: 80,
-                    color: colorScheme.primary.withOpacity(0.3),
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.3),
                   ),
                 ),
               ),
@@ -112,9 +111,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         formSections[_currentStep]['description'] as String,
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
                       ),
                     ),
                     Expanded(
@@ -144,7 +145,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   Widget _buildProgressBar() {
-    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: List.generate(
         formSections.length,
@@ -153,8 +153,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
             height: 4,
             margin: const EdgeInsets.symmetric(horizontal: 2),
             color: _currentStep >= index
-                ? colorScheme.primary
-                : colorScheme.surfaceVariant,
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.surfaceVariant,
           ),
         ),
       ),
@@ -162,12 +162,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   Widget _buildBottomNavigationBar() {
-    final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final barColor = isDark
-        ? colorScheme.primary.withOpacity(0.2)
-        : colorScheme.primary.withOpacity(0.2);
+        ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+        : Theme.of(context).colorScheme.primary.withOpacity(0.2);
 
     return BottomAppBar(
       color: barColor,
@@ -182,11 +181,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 ),
-                icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
+                icon: Icon(Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onPrimary),
                 label: Text('Geri',
-                    style: TextStyle(color: colorScheme.onPrimary)),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
               ),
             if (_currentStep < formSections.length - 1)
@@ -195,21 +196,25 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 ),
-                icon: Icon(Icons.arrow_forward, color: colorScheme.onPrimary),
+                icon: Icon(Icons.arrow_forward,
+                    color: Theme.of(context).colorScheme.onPrimary),
                 label: Text('İleri',
-                    style: TextStyle(color: colorScheme.onPrimary)),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
               ),
             if (_currentStep == formSections.length - 1)
               ElevatedButton.icon(
                 onPressed: _submitForm,
-                icon: Icon(Icons.check, color: colorScheme.onPrimary),
+                icon: Icon(Icons.check,
+                    color: Theme.of(context).colorScheme.onPrimary),
                 label: Text('Tamamla',
-                    style: TextStyle(color: colorScheme.onPrimary)),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
               ),
           ],
@@ -219,9 +224,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   Widget _buildBasicInfoSection() {
-    /*     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;*/
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -340,15 +342,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   Widget _buildImageSelector() {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     return InkWell(
       onTap: _pickImage,
       child: Container(
         height: 200,
         decoration: BoxDecoration(
-          color: colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
           image: _selectedImagePath != null
               ? DecorationImage(
@@ -362,13 +361,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.add_photo_alternate,
-                      size: 50, color: colorScheme.primary),
+                      size: 50, color: Theme.of(context).colorScheme.primary),
                   const SizedBox(height: 8),
                   Text(
                     'Etkinlik Görseli Seçin',
-                    style: textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.primary,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                   ),
                 ],
               )
@@ -389,7 +388,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   void _submitForm() {
-    final colorScheme = Theme.of(context).colorScheme;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -448,9 +446,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
         SnackBar(
           content: Text(
             'Etkinlik başarıyla oluşturuldu!',
-            style: TextStyle(color: colorScheme.onPrimary),
+            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           ),
-          backgroundColor: colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
 
@@ -459,14 +457,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   void _showErrorSnackBar(String message) {
-    final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(color: colorScheme.onError),
+          style: TextStyle(color: Theme.of(context).colorScheme.onError),
         ),
-        backgroundColor: colorScheme.error,
+        backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
   }
