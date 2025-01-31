@@ -133,16 +133,17 @@ class _EventCardState extends State<EventCard> {
                   onPressed: _joinEvent,
                   icon: Icon(
                     _hasJoined ? Icons.check : Icons.person_add,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   label: Text(
                     _hasJoined ? 'Katıldım' : 'Katıl',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
                   ),
                 ),
                 ElevatedButton(
@@ -155,9 +156,13 @@ class _EventCardState extends State<EventCard> {
                       ),
                     );
                   },
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  child: const Text('Detay'),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary),
+                  child: Text(
+                    'Detay',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primaryContainer),
+                  ),
                 ),
               ],
             ),
