@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:linkup/screens/event_detail_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,6 +58,65 @@ class _EventCardState extends State<EventCard> {
     _saveParticipationStatus();
   }
 
+  // Yeni seçenekler menüsünü oluştur
+  void _showBottomSheetMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Düzenle'),
+                onTap: () {
+                  _editEvent();
+                  Navigator.pop(context); // Menüden çık
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Sil'),
+                onTap: () {
+                  _deleteEvent();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.share),
+                title: Text('Paylaş'),
+                onTap: () {
+                  _shareEvent();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Düzenle butonunun işlevi
+  void _editEvent() {
+    // Etkinlik düzenleme ekranına yönlendir
+    print('Düzenleme ekranına yönlendiriliyor...');
+  }
+
+  // Silme butonunun işlevi
+  void _deleteEvent() {
+    // Etkinliği sil
+    print('Etkinlik silindi...');
+  }
+
+  // Paylaşma butonunun işlevi
+  void _shareEvent() {
+    // Etkinliği paylaş
+    print('Etkinlik paylaşıldı...');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -68,23 +126,36 @@ class _EventCardState extends State<EventCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
-              image: _buildImageDecoration(),
-            ),
-            child: widget.event.imageUrl.isEmpty
-                ? Center(
-                    child: Icon(
-                      Icons.event,
-                      size: 48,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  )
-                : null,
+          Stack(
+            children: [
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(12)),
+                  image: _buildImageDecoration(),
+                ),
+                child: widget.event.imageUrl.isEmpty
+                    ? Center(
+                        child: Icon(
+                          Icons.event,
+                          size: 48,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      )
+                    : null,
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: Icon(Icons.more_vert),
+                  onPressed: () => _showBottomSheetMenu(context), // Menüyi aç
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.all(16),
