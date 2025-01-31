@@ -275,8 +275,7 @@ class _EventCardState extends State<EventCard> {
   Future<void> _saveParticipationStatus() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('joined_${widget.event.id}', _hasJoined);
-    await prefs.setInt(
-        'participantCount_${widget.event.id}', _participantCount);
+    await prefs.setInt('participantCount_${widget.event.id}', _participantCount);
   }
 
   void _joinEvent() {
@@ -304,9 +303,9 @@ class _EventCardState extends State<EventCard> {
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
+
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               image: _buildImageDecoration(),
             ),
             child: widget.event.imageUrl.isEmpty
@@ -360,7 +359,7 @@ class _EventCardState extends State<EventCard> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton.icon(
                   onPressed: _joinEvent,
@@ -377,6 +376,18 @@ class _EventCardState extends State<EventCard> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetaySayfasi(event: widget.event),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text('Detay'),
                 ),
               ],
             ),
@@ -415,6 +426,104 @@ class _EventCardState extends State<EventCard> {
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DetaySayfasi extends StatelessWidget {
+  final Event event;
+
+  const DetaySayfasi({Key? key, required this.event}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(event.title),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Etkinlik resmi
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: _buildImageDecoration(),
+                ),
+                child: event.imageUrl.isEmpty
+                    ? Center(
+                  child: Icon(
+                    Icons.event,
+                    size: 48,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                )
+                    : null,
+              ),
+              const SizedBox(height: 16),
+              // Etkinlik başlığı
+              Text(
+                event.title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Etkinlik açıklaması
+              Text(
+                event.description,
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 16),
+              // Etkinlik bilgileri
+              _buildInfoRow(Icons.calendar_today, 'Tarih: ${event.date.day}/${event.date.month}/${event.date.year}'),
+              _buildInfoRow(Icons.access_time, 'Saat: ${event.time}'),
+              _buildInfoRow(Icons.location_on, 'Konum: ${event.location}'),
+              _buildInfoRow(Icons.phone, 'İletişim: ${event.contactPhone}'),
+              _buildInfoRow(Icons.business, 'Organizasyon: ${event.organizationInfo}'),
+              const SizedBox(height: 16),
+              // Katılımcı
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  DecorationImage? _buildImageDecoration() {
+    if (event.imageUrl.isEmpty) return null;
+
+    try {
+      return DecorationImage(
+        image: FileImage(File(event.imageUrl)),
+        fit: BoxFit.cover,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Colors.grey[600]),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.grey, fontSize: 16),
+            ),
           ),
         ],
       ),

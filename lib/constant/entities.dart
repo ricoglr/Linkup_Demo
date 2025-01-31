@@ -29,6 +29,9 @@ class Event {
     required this.organizationInfo,
   });
 
+  // Katılımcı sayısını döndüren bir yöntem
+  int get participantCount => participants.length;
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -82,5 +85,4 @@ class Badge {
     required this.requiredEvents,
     required this.category,
   });
-
 }
