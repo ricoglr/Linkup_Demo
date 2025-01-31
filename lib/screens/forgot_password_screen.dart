@@ -26,16 +26,17 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2F3E46),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onSecondary,
           ),
           onPressed: () {
-            // Geri butonuna basıldığında LoginScreen'e yönlendirme
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => LoginScreen()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
           },
         ),
       ),
@@ -45,39 +46,38 @@ class ForgotPasswordScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(22),
-            color: const Color(0xFF2F3E46),
+            color: Theme.of(context).colorScheme.primary,
             child: SafeArea(
               bottom: false,
               child: Column(
                 children: [
                   const SizedBox(height: 50),
-                  const Text(
+                  Text(
                     'Şifremi Unuttum',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontWeight: FontWeight.w700,
+                        ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     'Şifre Sıfırlamak için mail adresinizi girin',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white70,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
                   ),
                   const SizedBox(height: 50),
                 ],
               ),
             ),
           ),
+
           // Ana içerik kısmı
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(30),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onSecondary,
               ),
               child: SingleChildScrollView(
                 child: Form(
@@ -92,6 +92,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                         labelText: 'Email',
                         hintText: 'mail@example.com',
                         validator: _handleEmail,
+                        //   textStyle: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(height: 20),
                       // Bağlantı gönder butonu
@@ -113,25 +114,35 @@ class ForgotPasswordScreen extends StatelessWidget {
                                   children: [
                                     const Icon(
                                       Icons.check_circle_outline,
-                                      color: Color(0xFF84A98C),
+                                      color: Colors.black,
                                       size: 64,
                                     ),
                                     const SizedBox(height: 16),
-                                    const Text(
+                                    Text(
                                       'Bağlantı Gönderildi',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
                                     ),
                                     const SizedBox(height: 8),
-                                    const Text(
+                                    Text(
                                       'Şifre sıfırlama bağlantısı email adresinize gönderildi.',
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 15,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                            fontSize: 15,
+                                          ),
                                     ),
                                     const SizedBox(height: 24),
                                     SizedBox(
@@ -147,9 +158,12 @@ class ForgotPasswordScreen extends StatelessWidget {
                                           );
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF84A98C),
-                                          foregroundColor: Colors.white,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          foregroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 16),
                                           shape: RoundedRectangleBorder(
@@ -158,12 +172,17 @@ class ForgotPasswordScreen extends StatelessWidget {
                                           ),
                                           elevation: 0,
                                         ),
-                                        child: const Text(
+                                        child: Text(
                                           'Tamam',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSecondary),
                                         ),
                                       ),
                                     ),
@@ -174,8 +193,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF84A98C),
-                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -183,7 +204,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           elevation: 0,
                         ),
                         child: const Text(
-                          'Bağlantı Gönder',
+                          'Şifre Sıfırlama Bağlantısını Gönder',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

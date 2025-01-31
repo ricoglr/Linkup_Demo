@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:linkup/screens/login_screen.dart';
+import 'package:linkup/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 import '../constant/entities.dart';
 import '../services/badge_service.dart';
 import '../services/event_service.dart';
@@ -15,7 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final BadgeService _badgeService = BadgeService();
   final EventService _eventService = EventService();
 
-  // Temsili veriler
+  // Temsili veriler aynı kalacak
   final Map<String, dynamic> _userData = {
     'name': 'Kullanıcı Adı',
     'email': 'kullanici@email.com',
@@ -24,7 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'createdEvents': 5,
   };
 
-  // Temsili geçmiş etkinlikler
+  // Temsili geçmiş etkinlikler aynı kalacak
   final List<Event> _pastEvents = [
     Event(
       id: '1',
@@ -54,7 +56,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       contactPhone: '555-0002',
       organizationInfo: 'UN Women',
     ),
-    // ... diğer geçmiş etkinlikler
   ];
 
   @override
@@ -66,22 +67,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             expandedHeight: 200,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(_userData['name']),
+              title: Text(_userData['name'],
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary)),
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.7),
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
                     ],
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.person,
                   size: 80,
-                  color: Colors.white24,
+                  color:
+                      Theme.of(context).colorScheme.onPrimary.withOpacity(0.24),
                 ),
               ),
             ),
@@ -124,16 +128,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Text(
           value.toString(),
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey[600]),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ),
       ],
     );
@@ -151,42 +156,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                const Icon(Icons.military_tech, size: 24),
+                Icon(Icons.military_tech,
+                    size: 24, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'Rozetlerim',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const Spacer(),
                 Text(
                   '${badges.length} / ${_badgeService.getAllBadges().length}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
           ),
           if (badges.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Center(
                 child: Column(
                   children: [
                     Icon(
                       Icons.emoji_events_outlined,
                       size: 48,
-                      color: Colors.grey,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Henüz rozet kazanılmadı.\nEtkinliklere katılarak rozetler kazanabilirsiniz!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -215,31 +221,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               badge.icon,
-                              style: const TextStyle(fontSize: 24),
+                              style: Theme.of(context).textTheme.headlineSmall,
                             ),
                             const SizedBox(width: 8),
-                            Expanded(child: Text(badge.name)),
+                            Expanded(
+                              child: Text(
+                                badge.name,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ),
                           ],
                         ),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(badge.description),
+                            Text(
+                              badge.description,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               'Kategori: ${badge.category}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontStyle: FontStyle.italic,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                             ),
                           ],
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text('Tamam'),
+                            child: Text(
+                              'Tamam',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
                           ),
                         ],
                       ),
@@ -251,13 +274,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Theme.of(context).primaryColor.withOpacity(0.1),
-                          Theme.of(context).primaryColor.withOpacity(0.2),
+                          Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.1),
+                          Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.2),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.3),
                       ),
                     ),
                     child: Column(
@@ -266,11 +298,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surface,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .shadow
+                                    .withOpacity(0.1),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -278,7 +313,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: Text(
                             badge.icon,
-                            style: const TextStyle(fontSize: 32),
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -289,10 +324,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                         ),
                       ],
@@ -312,36 +349,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Text(
               'Profil Bilgileri',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.person),
-            title: Text(_userData['name']),
-            trailing: const Icon(Icons.edit),
+            leading: Icon(Icons.person,
+                color: Theme.of(context).colorScheme.primary),
+            title: Text(_userData['name'],
+                style: Theme.of(context).textTheme.bodyLarge),
+            trailing:
+                Icon(Icons.edit, color: Theme.of(context).colorScheme.primary),
             onTap: () {
               // TODO: İsim düzenleme
             },
           ),
           ListTile(
-            leading: const Icon(Icons.email),
-            title: Text(_userData['email']),
-            trailing: const Icon(Icons.edit),
+            leading:
+                Icon(Icons.email, color: Theme.of(context).colorScheme.primary),
+            title: Text(_userData['email'],
+                style: Theme.of(context).textTheme.bodyLarge),
+            trailing:
+                Icon(Icons.edit, color: Theme.of(context).colorScheme.primary),
             onTap: () {
               // TODO: Email düzenleme
             },
           ),
           ListTile(
-            leading: const Icon(Icons.phone),
-            title: Text(_userData['phone']),
-            trailing: const Icon(Icons.edit),
+            leading:
+                Icon(Icons.phone, color: Theme.of(context).colorScheme.primary),
+            title: Text(_userData['phone'],
+                style: Theme.of(context).textTheme.bodyLarge),
+            trailing:
+                Icon(Icons.edit, color: Theme.of(context).colorScheme.primary),
             onTap: () {
               // TODO: Telefon düzenleme
             },
@@ -357,22 +400,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Text(
               'Katıldığım Etkinlikler',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           if (_pastEvents.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Text(
                 'Henüz bir etkinliğe katılmadınız.',
-                style: TextStyle(color: Colors.grey),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
               ),
             )
           else
@@ -385,21 +427,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundColor:
-                    Theme.of(context).primaryColor.withOpacity(0.1),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                     child: Text(
                       event.category.substring(0, 1),
                       style: TextStyle(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
-                  title: Text(event.title),
+                  title: Text(event.title,
+                      style: Theme.of(context).textTheme.bodyLarge),
                   subtitle: Text(
                     '${event.date.day}/${event.date.month}/${event.date.year} - ${event.location}',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   trailing: Icon(
                     Icons.verified,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 );
               },
@@ -415,93 +459,108 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Text(
               'Ayarlar',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.notifications),
-            title: const Text('Bildirimler'),
+            leading: Icon(Icons.notifications,
+                color: Theme.of(context).colorScheme.primary),
+            title: Text('Bildirimler',
+                style: Theme.of(context).textTheme.bodyLarge),
             trailing: Switch(
               value: true,
+              activeColor: Theme.of(context).colorScheme.primary,
               onChanged: (value) {
                 // TODO: Bildirim ayarları
               },
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.dark_mode),
-            title: const Text('Karanlık Mod'),
-            trailing: Switch(
-              value: false,
-              onChanged: (value) {
-                // TODO: Tema değiştirme
+            leading: Icon(Icons.dark_mode,
+                color: Theme.of(context).colorScheme.primary),
+            title: Text('Karanlık Mod',
+                style: Theme.of(context).textTheme.bodyLarge),
+            trailing: Consumer<ThemeProvider>(
+              builder: (context, themeProvider, child) {
+                return Switch(
+                  value: themeProvider.isDarkMode,
+                  activeColor: Theme.of(context).colorScheme.primary,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme();
+                  },
+                );
               },
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.language),
-            title: const Text('Dil'),
-            trailing: const Icon(Icons.arrow_forward_ios),
+            leading: Icon(Icons.language,
+                color: Theme.of(context).colorScheme.primary),
+            title: Text('Dil', style: Theme.of(context).textTheme.bodyLarge),
+            trailing: Icon(Icons.arrow_forward_ios,
+                color: Theme.of(context).colorScheme.primary),
             onTap: () {
               // TODO: Dil seçimi
             },
           ),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text(
+            leading:
+                Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
+            title: Text(
               'Çıkış Yap',
-              style: TextStyle(color: Colors.red),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
             ),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Çıkış Yap',
-                        style: TextStyle(
-                            color: Color(0xFF2F3E46),
-                            fontWeight: FontWeight.w600)),
+                    title: Text(
+                      'Çıkış Yap',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     content: Text(
-                        'Çıkış yapmak üzeresiniz. Çıkmak istediğinize emin misiniz?',
-                        style: TextStyle(
-                            color: Color(0xFF2F3E46),
-                            fontWeight: FontWeight.w400)),
+                      'Çıkış yapmak üzeresiniz. Çıkmak istediğinize emin misiniz?',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     actions: <Widget>[
-                      ElevatedButton(
+                      TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('İptal',
-                            style: TextStyle(
-                                color: Color(0xFF2F3E46),
-                                fontWeight: FontWeight.w300)),
+                        child: Text(
+                          'İptal',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF84A98C)),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ),
                         onPressed: () {
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
+                              builder: (context) => LoginScreen(),
+                            ),
                             (Route<dynamic> route) => false,
                           );
                         },
                         child: Text(
                           'Evet',
                           style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w300),
+                              color: Theme.of(context).colorScheme.onPrimary),
                         ),
                       ),
                     ],
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

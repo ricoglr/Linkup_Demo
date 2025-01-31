@@ -58,6 +58,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Bottom bar ile aynı renk
+    final barColor = isDark
+        ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+        : Theme.of(context).colorScheme.primary.withOpacity(0.2);
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -67,23 +73,30 @@ class _AddEventScreenState extends State<AddEventScreen> {
               expandedHeight: 200,
               floating: false,
               pinned: true,
+              backgroundColor: barColor,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(formSections[_currentStep]['title'] as String),
+                title: Text(
+                  formSections[_currentStep]['title'] as String,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                ),
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor.withOpacity(0.7),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       ],
                     ),
                   ),
                   child: Icon(
                     formSections[_currentStep]['icon'] as IconData?,
                     size: 80,
-                    color: Colors.white.withOpacity(0.3),
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.3),
                   ),
                 ),
               ),
@@ -98,7 +111,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         formSections[_currentStep]['description'] as String,
-                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
                       ),
                     ),
                     Expanded(
@@ -131,13 +148,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
     return Row(
       children: List.generate(
         formSections.length,
-            (index) => Expanded(
+        (index) => Expanded(
           child: Container(
             height: 4,
             margin: const EdgeInsets.symmetric(horizontal: 2),
             color: _currentStep >= index
-                ? Theme.of(context).primaryColor
-                : Colors.grey,
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.surfaceVariant,
           ),
         ),
       ),
@@ -145,7 +162,14 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   Widget _buildBottomNavigationBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final barColor = isDark
+        ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+        : Theme.of(context).colorScheme.primary.withOpacity(0.2);
+
     return BottomAppBar(
+      color: barColor,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -157,8 +181,14 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 ),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Geri'),
+                icon: Icon(Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onPrimary),
+                label: Text('Geri',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
               ),
             if (_currentStep < formSections.length - 1)
               ElevatedButton.icon(
@@ -166,14 +196,26 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 ),
-                icon: const Icon(Icons.arrow_forward),
-                label: const Text('İleri'),
+                icon: Icon(Icons.arrow_forward,
+                    color: Theme.of(context).colorScheme.onPrimary),
+                label: Text('İleri',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
               ),
             if (_currentStep == formSections.length - 1)
               ElevatedButton.icon(
                 onPressed: _submitForm,
-                icon: const Icon(Icons.check),
-                label: const Text('Tamamla'),
+                icon: Icon(Icons.check,
+                    color: Theme.of(context).colorScheme.onPrimary),
+                label: Text('Tamamla',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
               ),
           ],
         ),
@@ -205,7 +247,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
             items: FormConstants.eventTypes,
             onChanged: (value) => setState(() => _eventType = value),
             validator: (value) =>
-            value == null ? "Etkinlik türü seçiniz" : null,
+                value == null ? "Etkinlik türü seçiniz" : null,
           ),
         ],
       ),
@@ -305,24 +347,30 @@ class _AddEventScreenState extends State<AddEventScreen> {
       child: Container(
         height: 200,
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
           image: _selectedImagePath != null
               ? DecorationImage(
-            image: FileImage(File(_selectedImagePath!)),
-            fit: BoxFit.cover,
-          )
+                  image: FileImage(File(_selectedImagePath!)),
+                  fit: BoxFit.cover,
+                )
               : null,
         ),
         child: _selectedImagePath == null
             ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.add_photo_alternate, size: 50),
-            SizedBox(height: 8),
-            Text('Etkinlik Görseli Seçin'),
-          ],
-        )
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_photo_alternate,
+                      size: 50, color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Etkinlik Görseli Seçin',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                  ),
+                ],
+              )
             : null,
       ),
     );
@@ -382,7 +430,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         description: _description ?? '',
         date: _startDate!,
         time:
-        '${_startTime!.hour}:${_startTime!.minute.toString().padLeft(2, '0')}',
+            '${_startTime!.hour}:${_startTime!.minute.toString().padLeft(2, '0')}',
         location: _location!,
         category: _eventType!,
         imageUrl: _selectedImagePath ?? '',
@@ -395,9 +443,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
       EventService().addEvent(event);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Etkinlik başarıyla oluşturuldu!'),
-          backgroundColor: Colors.green,
+        SnackBar(
+          content: Text(
+            'Etkinlik başarıyla oluşturuldu!',
+            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
 
@@ -408,8 +459,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
+        content: Text(
+          message,
+          style: TextStyle(color: Theme.of(context).colorScheme.onError),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
   }
