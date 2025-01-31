@@ -41,14 +41,13 @@ class _HomeScreenState extends State<HomeScreen>
   // Mevcut event filtreleme metodları aynı kalacak
   List<Event> get _todayEvents {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final todayEnd = todayStart.add(const Duration(days: 1));
 
     return _events.where((event) {
       final eventDateTime = _combineDateTime(event.date, event.time);
-      return (event.date.isAfter(today) && event.date.isBefore(tomorrow)) ||
-          (eventDateTime.isAfter(now) &&
-              eventDateTime.isBefore(now.add(const Duration(hours: 3))));
+      return eventDateTime.isAfter(todayStart) &&
+          eventDateTime.isBefore(todayEnd);
     }).toList()
       ..sort((a, b) => _combineDateTime(a.date, a.time)
           .compareTo(_combineDateTime(b.date, b.time)));
@@ -74,9 +73,9 @@ class _HomeScreenState extends State<HomeScreen>
           .compareTo(_combineDateTime(b.date, b.time)));
   }
 
-  List<Event> get _nextThreeHoursEvents {
+  List<Event> get _nextOneHoursEvents {
     final now = DateTime.now();
-    final threeHoursLater = now.add(const Duration(hours: 3));
+    final threeHoursLater = now.add(const Duration(hours: 1));
 
     return _events.where((event) {
       final eventDateTime = _combineDateTime(event.date, event.time);
@@ -139,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen>
         },
         body: CustomScrollView(
           slivers: [
-            if (_nextThreeHoursEvents.isNotEmpty)
+            if (_nextOneHoursEvents.isNotEmpty)
               SliverToBoxAdapter(
                 child: Container(
                   padding:
@@ -172,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: _nextThreeHoursEvents
+                          children: _nextOneHoursEvents
                               .map((event) => Card(
                                     margin: const EdgeInsets.only(right: 8),
                                     child: Padding(
