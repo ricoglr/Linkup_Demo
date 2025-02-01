@@ -51,9 +51,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   void dispose() {
-    Navigator.pop(context, {
-      'hasJoined': _hasJoined,
-      'participantCount': _participantCount,
+    // Burada Navigator.pop'ı güvenli bir şekilde çağırıyoruz
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Navigator.pop(context, {
+          'hasJoined': _hasJoined,
+          'participantCount': _participantCount,
+        });
+      }
     });
     _commentController.dispose();
     super.dispose();
@@ -73,7 +78,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // 1. SliverAppBar - Resmin küçülmesi ve kaybolması
           SliverAppBar(
             expandedHeight: 250,
             floating: false,
