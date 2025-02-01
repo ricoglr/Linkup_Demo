@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constant/entities.dart';
@@ -54,6 +55,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       'hasJoined': _hasJoined,
       'participantCount': _participantCount,
     });
+    _commentController.dispose();
     super.dispose();
   }
 
@@ -86,6 +88,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
+                double maxHeight = constraints.maxHeight;
+                double opacity = maxHeight > 0 ? (1 - (maxHeight / 250)) : 0;
+                opacity = opacity.clamp(0.0, 1.0); // Opacity değerini sınırla
+                return FlexibleSpaceBar(
+                  background: _buildImageWidget(widget.event.imageUrl),
+
                 double opacity = 1 - (constraints.maxHeight / 250);
                 return FlexibleSpaceBar(
                   background: widget.event.imageUrl.isEmpty
@@ -109,6 +117,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
+
                   title: Text(
                     widget.event.title,
                     style: TextStyle(
@@ -123,7 +132,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               },
             ),
           ),
-          // 2. Diğer içerikler
           SliverList(
             delegate: SliverChildListDelegate([
               Container(
@@ -304,6 +312,37 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImageWidget(String imageUrl) {
+    if (imageUrl.isEmpty || imageUrl.startsWith("/")) {
+      return Container(
+        color: Theme.of(context).colorScheme.primary,
+        width: double.infinity,
+        height: 250,
+        child: Center(
+          child: Icon(
+            Icons.image,
+            size: 48,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ),
+      );
+    }
+    if (imageUrl.contains("http")) {
+      return Image.network(
+        imageUrl,
+        width: double.infinity,
+        height: 250,
+        fit: BoxFit.cover,
+      );
+    }
+    return Image.file(
+      File(imageUrl),
+      width: double.infinity,
+      height: 250,
+      fit: BoxFit.cover,
     );
   }
 
