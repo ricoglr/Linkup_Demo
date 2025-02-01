@@ -16,5 +16,9 @@ import UIKit
 
     // Ana uygulama işlevine devam ediyoruz
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
+    // Firebase Analytics'i başlatıyoruz
+    //Bu kod, uygulama her açıldığında Firebase’e app_open adlı bir etkinlik gönderir.
+    Analytics.logEvent("app_open", parameters: nil)
   }
 }
