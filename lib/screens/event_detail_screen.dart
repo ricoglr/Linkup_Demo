@@ -73,6 +73,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
+          // 1. SliverAppBar - Resmin küçülmesi ve kaybolması
           SliverAppBar(
             expandedHeight: 250,
             floating: false,
@@ -92,6 +93,31 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 opacity = opacity.clamp(0.0, 1.0); // Opacity değerini sınırla
                 return FlexibleSpaceBar(
                   background: _buildImageWidget(widget.event.imageUrl),
+
+                double opacity = 1 - (constraints.maxHeight / 250);
+                return FlexibleSpaceBar(
+                  background: widget.event.imageUrl.isEmpty
+                      ? Container(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: double.infinity,
+                          height: 250,
+                          child: Center(
+                            child: Icon(
+                              Icons.image,
+                              size: 48,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        )
+                      : ClipRRect(
+                          child: Image.network(
+                            widget.event.imageUrl,
+                            width: double.infinity,
+                            height: 250,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+
                   title: Text(
                     widget.event.title,
                     style: TextStyle(

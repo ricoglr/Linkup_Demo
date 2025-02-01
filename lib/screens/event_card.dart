@@ -20,12 +20,6 @@ class _EventCardState extends State<EventCard> {
   int _participantCount = 0;
   bool _hasJoined = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadParticipationStatus();
-  }
-
   Future<void> _loadParticipationStatus() async {
     final prefs = await SharedPreferences.getInstance();
     bool joined = prefs.getBool('joined_${widget.event.id}') ?? false;
@@ -115,6 +109,12 @@ class _EventCardState extends State<EventCard> {
   void _shareEvent() {
     // Etkinliği paylaş
     print('Etkinlik paylaşıldı...');
+  }
+
+  @override
+  void initState() {
+    _loadParticipationStatus();
+    super.initState();
   }
 
   @override
@@ -219,6 +219,7 @@ class _EventCardState extends State<EventCard> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    _saveParticipationStatus();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -228,7 +229,17 @@ class _EventCardState extends State<EventCard> {
                           participantCount: _participantCount,
                         ),
                       ),
-                    );
+                    ).then((result) {
+                      setState(() {
+                        // Eğer `result` null ise bile `_loadParticipationStatus` çağrılarak veri güncellenir.
+                        if (result != null) {
+                          _hasJoined = result['hasJoined'];
+                          _participantCount = result['participantCount'];
+                        } else {
+                          _loadParticipationStatus();
+                        }
+                      });
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary),
