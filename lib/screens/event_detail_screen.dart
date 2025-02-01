@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constant/entities.dart';
@@ -50,10 +51,16 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   void dispose() {
-    Navigator.pop(context, {
-      'hasJoined': _hasJoined,
-      'participantCount': _participantCount,
+    // Burada Navigator.pop'ı güvenli bir şekilde çağırıyoruz
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Navigator.pop(context, {
+          'hasJoined': _hasJoined,
+          'participantCount': _participantCount,
+        });
+      }
     });
+    _commentController.dispose();
     super.dispose();
   }
 
@@ -71,7 +78,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // 1. SliverAppBar - Resmin küçülmesi ve kaybolması
           SliverAppBar(
             expandedHeight: 250,
             floating: false,
@@ -86,29 +92,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
-                double opacity = 1 - (constraints.maxHeight / 250);
+                double maxHeight = constraints.maxHeight;
+                double opacity = maxHeight > 0 ? (1 - (maxHeight / 250)) : 0;
+                opacity = opacity.clamp(0.0, 1.0); // Opacity değerini sınırla
                 return FlexibleSpaceBar(
-                  background: widget.event.imageUrl.isEmpty
-                      ? Container(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: double.infinity,
-                          height: 250,
-                          child: Center(
-                            child: Icon(
-                              Icons.image,
-                              size: 48,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          ),
-                        )
-                      : ClipRRect(
-                          child: Image.network(
-                            widget.event.imageUrl,
-                            width: double.infinity,
-                            height: 250,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                  background: _buildImageWidget(widget.event.imageUrl),
                   title: Text(
                     widget.event.title,
                     style: TextStyle(
@@ -123,7 +111,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               },
             ),
           ),
-          // 2. Diğer içerikler
           SliverList(
             delegate: SliverChildListDelegate([
               Container(
@@ -304,6 +291,37 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImageWidget(String imageUrl) {
+    if (imageUrl.isEmpty || imageUrl.startsWith("/")) {
+      return Container(
+        color: Theme.of(context).colorScheme.primary,
+        width: double.infinity,
+        height: 250,
+        child: Center(
+          child: Icon(
+            Icons.image,
+            size: 48,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ),
+      );
+    }
+    if (imageUrl.contains("http")) {
+      return Image.network(
+        imageUrl,
+        width: double.infinity,
+        height: 250,
+        fit: BoxFit.cover,
+      );
+    }
+    return Image.file(
+      File(imageUrl),
+      width: double.infinity,
+      height: 250,
+      fit: BoxFit.cover,
     );
   }
 
