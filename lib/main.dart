@@ -26,7 +26,7 @@ class MyAppState extends State<MyApp> {
         theme:
             themeProvider.isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
         themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: const LoginScreen(),
+        home: LoginScreen(),
       );
     });
   }
