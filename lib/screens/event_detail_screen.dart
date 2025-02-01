@@ -96,10 +96,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 double opacity = maxHeight > 0 ? (1 - (maxHeight / 250)) : 0;
                 opacity = opacity.clamp(0.0, 1.0); // Opacity değerini sınırla
                 return FlexibleSpaceBar(
-                  background: _buildImageWidget(widget.event.imageUrl),
-
-                double opacity = 1 - (constraints.maxHeight / 250);
-                return FlexibleSpaceBar(
                   background: widget.event.imageUrl.isEmpty
                       ? Container(
                           color: Theme.of(context).colorScheme.primary,
@@ -121,7 +117,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
-
                   title: Text(
                     widget.event.title,
                     style: TextStyle(
