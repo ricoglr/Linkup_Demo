@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Kullanıcı doğrulaması için yardımcı fonksiyon
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Belgenin sahibi olup olmadığını kontrol eden fonksiyon
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Events koleksiyonu kuralları
+    match /events/{eventId} {
+      // Herkes etkinlikleri okuyabilir
+      allow read: if true;
+      
+      // Sadece giriş yapmış kullanıcılar etkinlik oluşturabilir
+      allow create: if isAuthenticated();
+      
+      // Sadece etkinliği oluşturan kullanıcı güncelleyebilir ve silebilir
+      allow update, delete: if isAuthenticated() && 
+        isOwner(resource.data.organizerId);
+    }
+    
+    // Users koleksiyonu kuralları
+    match /users/{userId} {
+      // Kullanıcılar sadece kendi profillerini okuyabilir ve güncelleyebilir
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+  }
+} 
