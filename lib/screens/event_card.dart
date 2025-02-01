@@ -222,8 +222,11 @@ class _EventCardState extends State<EventCard> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            EventDetailScreen(event: widget.event),
+                        builder: (context) => EventDetailScreen(
+                          event: widget.event,
+                          hasJoined: _hasJoined,
+                          participantCount: _participantCount,
+                        ),
                       ),
                     );
                   },
