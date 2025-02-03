@@ -1,5 +1,5 @@
 <details open>
-  <summary>Türkçe README</summary>
+  <summary>🇹🇷 Turkish</summary>
 
   # Linkup Nedir?
 
@@ -20,7 +20,7 @@
 ---
 
 <details>
-  <summary>English README</summary>
+  <summary>🇬🇧 English</summary>
 
   # What is Linkup?
 
