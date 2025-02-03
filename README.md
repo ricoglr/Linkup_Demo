@@ -13,6 +13,11 @@
 
   Bu demo, Linkup uygulamasının kullanıcılar tarafından nasıl deneyimlendiğine dair bir önizleme sunar. Gerçek uygulama, burada görülen işlevselliği ve kullanıcı arayüzünü temel alarak daha da geliştirilecektir.
 
+  ## Katkıda Bulunanlar  
+  Bu projeye katkıda bulunan geliştiriciler:  
+  - [Gülnur Türkmen](https://github.com/GulnurTurkmen)  
+  - [Gülşah Başkurt](https://github.com/Gulsahbb)  
+
   ## Gerçek Proje
   Bu demo prototipin dışında, Linkup’un tam ve sağlam sürümünü görmek isterseniz, projenin ana sürümü [burada](https://github.com/ricoglr/Linkup) yer almaktadır. Bu sürüm, tüm işlevsellik ve özellikleriyle daha gelişmiş ve hazır bir mobil uygulama olarak sunulacaktır.
 </details>
@@ -33,6 +38,11 @@
   - **User Interface (UI)**: Showcases the user-friendly design and flow of the mobile application.
 
   This demo provides a preview of how users experience the Linkup app. The real application will be further developed based on the functionality and user interface seen here.
+
+  ## Contributors  
+  The following developers have contributed to this project:  
+  - [Gülnur Türkmen](https://github.com/GulnurTurkmen)  
+  - [Gülşah Başkurt](https://github.com/Gulsahbb)  
 
   ## Full Project
   Beyond this demo prototype, if you'd like to see the complete and fully functional version of Linkup, the main release of the project is available [here](https://github.com/ricoglr/Linkup). This version will be presented as a more advanced and ready-to-use mobile app with all functionalities and features.
